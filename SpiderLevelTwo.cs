@@ -4,74 +4,105 @@ using UnityEngine;
 
 public class SpiderLevelTwo : MonoBehaviour
 {
+    //variables
+    private Vector3 movementDirection = Vector3.down;
+    private Vector3 originPosition;
+    private Vector3 movePosition;
+    private bool canMove = false;
+    [SerializeField] private float _speed = 1f;
 
-    [SerializeField] private Transform targetA, targetB;
-    [SerializeField] private float _speed = 3.0f;
-    [SerializeField] private bool _switching = false;
-    [SerializeField] private GameObject _player;
-    private PlayerTwo _playerTwo;
 
-    
+    //reference varaiables
+    private Rigidbody2D body;
+    private Animator anim;
+    private PlayerTwo player;
+    private MainCameraTwo main;
     
     
     void Awake()
     {
-        //layer = GameObject.Find("Player");
-        _playerTwo = GameObject.Find("Player").GetComponent<PlayerTwo>();
+        //reference components
+        body = GetComponent<Rigidbody2D>();
+        anim = GetComponent<Animator>();
+        player = GameObject.Find("Player").GetComponent<PlayerTwo>();
+        main = GameObject.Find("Main Camera").GetComponent<MainCameraTwo>();
+
+        
+        
     }
 
     // Start is called before the first frame update
     void Start()
     {
-       
+        originPosition = transform.position;
+        originPosition.y += 2f;
+
+        movePosition = transform.position;
+        movePosition.y -= 5f;
+
+        canMove = true;
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        //method calls
+
+        SpiderMovement();
     }
 
-    void FixedUpdate()
-    {
-        //method call
-        Movement();
-
-    }
-
-
-
-    //spider movement
-    private void Movement()
-    {
-        if (_switching == false)
-        {
-           transform.position = Vector3.MoveTowards(transform.position, targetB.position, _speed * Time.deltaTime);
-        }
-        else if (_switching == true)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, targetA.position, _speed * Time.deltaTime);
-        }
-
-        if (transform.position == targetB.position)
-        {
-            _switching = true;
-        }
-        
-        else if (transform.position == targetA.position)
-        {
-            _switching = false;
-        }
-    }
-
-    //collision with player
-    void OnCollisionEnter2D(Collision2D other)
-    {
-        if(other.gameObject.tag == LevelTwoTags.PlayerTwo)
-        {
-            _playerTwo.PlayerDamaged();
-          //Destroy(other.gameObject);
-        }
-    }
     
+    //spider movement
+    void SpiderMovement()
+    {
+
+        if (canMove)
+        {
+            transform.Translate(movementDirection * Time.smoothDeltaTime);
+            if (transform.position.y >= originPosition.y)
+            {
+                movementDirection = Vector3.down * _speed;
+                ChangeDirection(0.6f);
+            }
+            else if (transform.position.y <= movePosition.y)
+            {
+                movementDirection = Vector3.up * _speed;
+                ChangeDirection(-0.6f);
+            }
+        }
+    }
+
+    //change direction
+    void ChangeDirection(float direction)
+    {
+        Vector3 tempScale = transform.localScale;
+        tempScale.y = direction;
+        transform.localScale = tempScale;
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (collision.gameObject.tag == LevelTwoTags.PlayerTwo)
+        {
+           Debug.Log("Player Damaged");
+           player.PlayerDamaged();
+        }
+        else if(collision.gameObject.tag == Tags.flameBulletTag)
+        {
+            Debug.Log("Destroy!");
+            main.GetDamagedSound();
+            Destroy(this.gameObject, 1f);
+            Destroy(collision.gameObject);
+            anim.Play("SpiderDead");
+            body.isKinematic = false;
+
+        }
+        
+    }
+
+
+
+
+
+
 }

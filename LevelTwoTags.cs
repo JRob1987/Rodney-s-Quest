@@ -12,4 +12,8 @@ public class LevelTwoTags
     public static string Coin = "Coin";
     public static string Spider = "Spider";
     public static string Cactus = "Cactus";
+    public static string Bird = "Bird";
+    public static string BirdStone = "Bird Stone";
+    public static string GhostEnemy = "Ghost";
+
 }

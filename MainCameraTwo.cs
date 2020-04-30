@@ -9,6 +9,7 @@ public class MainCameraTwo : MonoBehaviour
     [SerializeField] private AudioClip _jumpSound;
     [SerializeField] private AudioClip _shootFlameBulletSound;
     [SerializeField] private AudioClip _coinCollectSound;
+    [SerializeField] private AudioClip _damageSound;
    
 
     // Start is called before the first frame update
@@ -38,6 +39,11 @@ public class MainCameraTwo : MonoBehaviour
     public void CollectCoinsAudio()
     {
         AudioSource.PlayClipAtPoint(_coinCollectSound, transform.position);
+    }
+
+    public void GetDamagedSound()
+    {
+        AudioSource.PlayClipAtPoint(_damageSound, transform.position);
     }
 
 

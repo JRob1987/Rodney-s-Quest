@@ -2,94 +2,96 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BeetleEnemyTwo : MonoBehaviour
+public class BirdEnemy : MonoBehaviour
 {
-
     //variables
-    [SerializeField] private float _speed = 3f;
     private Vector3 movementDirection = Vector3.left;
     private Vector3 originPosition;
     private Vector3 movePosition;
+    [SerializeField] private GameObject birdStone;
+    [SerializeField] private LayerMask playerLayer;
+    private bool attacked = false;
     private bool canMove = false;
 
-    //reference varaiables
+    //reference variables
     private Rigidbody2D body;
     private Animator anim;
     private PlayerTwo player;
-    private MainCameraTwo main;
 
     private void Awake()
     {
+        //reference components
         body = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         player = GameObject.Find("Player").GetComponent<PlayerTwo>();
-        main = GameObject.Find("Main Camera").GetComponent<MainCameraTwo>();
+
     }
 
     private void Start()
     {
         originPosition = transform.position;
-        originPosition.x += 2f;
+        originPosition.x += 6f;
 
         movePosition = transform.position;
-        movePosition.x -= 14f;
+        movePosition.x -= 6f;
 
         canMove = true;
     }
 
     private void Update()
     {
-        BeetleMovement();
+        BirdMovement();
+        DropStone();
     }
 
-    //movement
-    private void BeetleMovement()
+    void BirdMovement()
     {
-        if (canMove)
+        if(canMove)
         {
             transform.Translate(movementDirection * Time.smoothDeltaTime);
-            if (transform.position.x >= originPosition.x)
+            if(transform.position.x >= originPosition.x)
             {
                 movementDirection = Vector3.left;
-                ChangeDirection(0.7f);
+                ChangeDirection(0.6f);
             }
-            else if (transform.position.x <= movePosition.x)
+            else if(transform.position.x <= movePosition.x)
             {
                 movementDirection = Vector3.right;
-                ChangeDirection(-0.7f);
+                ChangeDirection(-0.6f);
             }
         }
     }
 
-    //change direction while moving
-    private void ChangeDirection(float direction)
+
+    void ChangeDirection(float direction)
     {
         Vector3 tempScale = transform.localScale;
         tempScale.x = direction;
         transform.localScale = tempScale;
     }
 
-
-    private void OnTriggerEnter2D(Collider2D collision)
+    void DropStone()
     {
-        if (collision.gameObject.tag == LevelTwoTags.PlayerTwo)
+        if(!attacked)
         {
-            Debug.Log("Player Damaged");
-            player.PlayerDamaged();
+            if(Physics2D.Raycast(transform.position, Vector2.down, Mathf.Abs(-6f), playerLayer))
+            {
+                Instantiate(birdStone, new Vector3(transform.position.x, transform.position.y - 1f, transform.position.z), Quaternion.identity);
+                attacked = true;
+                anim.Play("BirdFly");
+            }
         }
-        else if (collision.gameObject.tag == Tags.flameBulletTag)
-        {
-            Debug.Log("Destroy!");
-            main.GetDamagedSound();
-            Destroy(this.gameObject, 0.5f);
-            Destroy(collision.gameObject);
-            anim.SetBool("Dead", true);
-           
-
-        }
-
     }
 
+    private void OnCollisionEnter2D(Collision2D collision)
+    {
+        if(collision.gameObject.tag == LevelTwoTags.PlayerTwo)
+        {
+            player.PlayerDamaged();
+        }
+    }
+
+    
 
 
 
@@ -100,4 +102,5 @@ public class BeetleEnemyTwo : MonoBehaviour
 
 
 
-} //end of class
+
+}

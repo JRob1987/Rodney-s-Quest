@@ -13,6 +13,10 @@ public class PlayerTwo : MonoBehaviour
     [SerializeField] LayerMask groundLayer;
     [SerializeField] private bool isGrounded = true;
     [SerializeField] private int lives = 3;
+    private Vector3 facingRight;
+    private Vector3 facingLeft;
+    
+  
 
     //jumping
     private bool jumped;
@@ -20,7 +24,9 @@ public class PlayerTwo : MonoBehaviour
 
     //flame bullet
     [SerializeField] private GameObject _flameBulletPrefab;
-    private bool canFire;
+    [SerializeField] private float _flameBulletSpeed = 3f;
+    [SerializeField] private GameObject _flameBulletPrefabReverse;
+     private bool canFire = false;
 
    
     
@@ -28,12 +34,16 @@ public class PlayerTwo : MonoBehaviour
     private Rigidbody2D body;
     private Animator anim;
     private MainCameraTwo main;
+    
+    
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         main = GameObject.Find("Main Camera").GetComponent<MainCameraTwo>();
+      
+        
     }
 
     // Start is called before the first frame update
@@ -46,20 +56,19 @@ public class PlayerTwo : MonoBehaviour
     void Update()
     {
         CheckIfPlayerGrounded();
-        Jump();
-        ShootFireBall();
-    }
 
-    private void FixedUpdate()
-    {
         if(player != null)
         {
             PlayerWalk();
             PlayerBounds();
-            
+            Jump();
+            ShootFireBall();
+
         }
+       
     }
 
+   
     //player movement
     void PlayerWalk()
     {
@@ -71,15 +80,17 @@ public class PlayerTwo : MonoBehaviour
 
             body.velocity = new Vector2(speed, body.velocity.y);
             ChangeDirection(1);
-            _flameBulletPrefab.SetActive(true);
+            
+            
         }
         else if (horizontalMovement < 0)
         {
 
             body.velocity = new Vector2(-speed, body.velocity.y);
             ChangeDirection(-1);
-            anim.SetBool("Fire", false);
-            _flameBulletPrefab.SetActive(false);
+           
+            
+           
         }
         //prevents player from sliding when movement stops
         else
@@ -125,7 +136,7 @@ public class PlayerTwo : MonoBehaviour
     //player jump
     void Jump()
     {
-        if (isGrounded == true)
+        if (isGrounded)
         {
             if (Input.GetKey(KeyCode.Space))
             {
@@ -134,6 +145,10 @@ public class PlayerTwo : MonoBehaviour
                 body.velocity = new Vector2(body.velocity.x, jumpForce); //adding velocity to the rigid body, 
                 anim.SetBool("Jump", true); //setting jump animator parameter to true
             }
+           
+
+            
+            
         }
     }
 
@@ -141,28 +156,38 @@ public class PlayerTwo : MonoBehaviour
     {
         if(isGrounded)
         {
-            if(Input.GetMouseButtonDown(0))
+            if (Input.GetMouseButtonDown(0) && transform.localScale.x == 1)
             {
+
                 canFire = true;
                 main.ShootFlameBulletAudio();
                 anim.SetBool("Fire", true);
-                StartCoroutine(ShootFireballDelay(0.1f));
+                Instantiate(_flameBulletPrefab, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+                //Instantiate(_flameBulletPrefab, new Vector2(transform.position.x, transform.position.y) * _flameBulletSpeed, Quaternion.identity);
+
 
             }
+            else if (Input.GetMouseButtonDown(0) && transform.localScale.x == -1)
+            {
+                
+                canFire = true;
+                main.ShootFlameBulletAudio();
+                anim.SetBool("Fire", true);
+                Instantiate(_flameBulletPrefabReverse, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
+            }
+
+
+            
+           
         }
+        
     }
-
-    IEnumerator ShootFireballDelay(float seconds)
-    {
-        yield return new WaitForSeconds(seconds);
-        Instantiate(_flameBulletPrefab, new Vector2(transform.position.x + 0.75f, transform.position.y), Quaternion.identity);
-
-
-    }
-
+      
+    
     //player Damaged
     public void PlayerDamaged()
     {
+        main.GetDamagedSound();
         lives = lives - 1;
         if(lives < 1)
         {
