@@ -12,9 +12,13 @@ public class PlayerTwo : MonoBehaviour
     [SerializeField] Transform groundCheckPosition;
     [SerializeField] LayerMask groundLayer;
     [SerializeField] private bool isGrounded = true;
-    [SerializeField] private int lives = 3;
+    public int lives = 3;
     private Vector3 facingRight;
     private Vector3 facingLeft;
+    private bool hasBeenDamaged = false;
+   [SerializeField] private GameObject coinPrefab;
+   public int coinsCollected = 0;
+    
     
   
 
@@ -34,16 +38,23 @@ public class PlayerTwo : MonoBehaviour
     private Rigidbody2D body;
     private Animator anim;
     private MainCameraTwo main;
-    
-    
+    private SpriteRenderer render;
+    private UIManagerTwo uiManager;
+
+
+
+
+
 
     private void Awake()
     {
         body = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         main = GameObject.Find("Main Camera").GetComponent<MainCameraTwo>();
-      
-        
+        render = GetComponent<SpriteRenderer>();
+        uiManager = GameObject.Find("Canvas").GetComponent<UIManagerTwo>();
+
+
     }
 
     // Start is called before the first frame update
@@ -187,11 +198,14 @@ public class PlayerTwo : MonoBehaviour
     //player Damaged
     public void PlayerDamaged()
     {
+        StartCoroutine(FlashWhenDamaged(0.1f));
         main.GetDamagedSound();
         lives = lives - 1;
-        if(lives < 1)
+        uiManager.UpdatePlayerLivesUIText(lives);
+        if (lives < 1)
         {
             Destroy(this.gameObject);
+            Time.timeScale = 0;
         }
     }
 
@@ -203,6 +217,49 @@ public class PlayerTwo : MonoBehaviour
         }
 
     }
+
+    //coroutine for player to flash when damaged
+    IEnumerator FlashWhenDamaged(float seconds)
+    {
+        hasBeenDamaged = true;
+        if (hasBeenDamaged)
+        {
+            render.enabled = true;
+            yield return new WaitForSeconds(seconds);
+            render.enabled = false;
+            yield return new WaitForSeconds(seconds);
+        }
+        render.enabled = true;
+
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.tag == Tags.coins)
+        {
+            main.CollectCoinsAudio();
+            coinsCollected = coinsCollected + 1;
+            uiManager.UpdateCoinsCollectedText(coinsCollected);
+            if(coinsCollected == 10)
+            {
+                lives++;
+                uiManager.UpdatePlayerLivesUIText(lives);
+            }
+        }
+        else if(collision.tag == LevelTwoTags.Fireball)
+        {
+            PlayerDamaged();
+            Destroy(collision.gameObject);
+        }
+        else if(collision.tag == Tags.castle)
+        {
+            main.StopLevelTwoSong();
+            main.LevelClearSound();
+            uiManager.DisplayLevelCompleteText();
+        }
+    }
+
+
 
 
 

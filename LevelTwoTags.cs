@@ -15,5 +15,9 @@ public class LevelTwoTags
     public static string Bird = "Bird";
     public static string BirdStone = "Bird Stone";
     public static string GhostEnemy = "Ghost";
+    public static string Fireball = "Fireball";
+    public static string escapeStump = "Escape Stump";
+    public static string ghostBoss = "Ghost Boss";
+   
 
 }
