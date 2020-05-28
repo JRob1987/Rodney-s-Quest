@@ -6,6 +6,7 @@ public class MainThree : MonoBehaviour
 {
     //variables
     [SerializeField] private AudioClip _shoot;
+    [SerializeField] private AudioClip _coins;
     // Start is called before the first frame update
     void Start()
     {
@@ -22,5 +23,11 @@ public class MainThree : MonoBehaviour
     public void ShootFlameBulletAudio()
     {
         AudioSource.PlayClipAtPoint(_shoot, transform.position);
+    }
+
+    //coin collect audio
+    public void CoinCollect()
+    {
+        AudioSource.PlayClipAtPoint(_coins, transform.position);
     }
 }

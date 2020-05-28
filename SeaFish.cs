@@ -1,4 +1,6 @@
-﻿using System.Collections;
+﻿//behavior of fish enemy: move in both directions, take damage by flame bullet, damage the player
+
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -14,11 +16,14 @@ public class SeaFish : MonoBehaviour
     //reference variables
     private Rigidbody2D _body;
     private Animator _anim;
+    private LevelThreePlayer _player;
+    
 
     private void Awake()
     {
         _body = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
+        _player = GameObject.Find("Player").GetComponent<LevelThreePlayer>();
     }
 
     // Start is called before the first frame update
@@ -28,7 +33,7 @@ public class SeaFish : MonoBehaviour
         originPosition.x += 4f;
 
         movePosition = transform.position;
-        movePosition.x -= 4f;
+        movePosition.x -= 11f;
 
         canMove = true;
     }
@@ -45,7 +50,7 @@ public class SeaFish : MonoBehaviour
     {
         if (canMove)
         {
-            transform.Translate(movementDirection * Time.smoothDeltaTime);
+            transform.Translate(movementDirection * _movementSpeed * Time.smoothDeltaTime);
             if (transform.position.x >= originPosition.x)
             {
                 movementDirection = Vector3.left;
@@ -65,6 +70,21 @@ public class SeaFish : MonoBehaviour
         Vector3 tempScale = transform.localScale;
         tempScale.x = direction;
         transform.localScale = tempScale;
+    }
+
+    private void OnTriggerEnter2D(Collider2D target)
+    {
+        if(target.tag == Tags.flameBulletTag)
+        {
+            Destroy(target.gameObject);
+            Destroy(this.gameObject);
+
+        }
+        else if(target.tag == Level3Tags.LevelThreePlayer)
+        {
+            _player.PlayerDamaged();
+            Destroy(this.gameObject);
+        }
     }
 
 

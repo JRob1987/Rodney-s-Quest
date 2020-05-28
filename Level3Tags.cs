@@ -6,4 +6,5 @@ public class Level3Tags
 {
     public static string LevelThreePlayer = "Player";
     public static string seaFish = "Fish";
+    public static string coins = "Coin";
 }

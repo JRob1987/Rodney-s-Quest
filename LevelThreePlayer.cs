@@ -17,7 +17,7 @@ public class LevelThreePlayer : MonoBehaviour
     private Rigidbody2D _body;
     private Animator _anim;
     private MainThree _main;
-    private Renderer render;
+    private SpriteRenderer render;
 
     private void Awake()
     {
@@ -25,6 +25,7 @@ public class LevelThreePlayer : MonoBehaviour
         _body = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
         _main = GameObject.Find("Main Camera").GetComponent<MainThree>();
+        render = GetComponent<SpriteRenderer>();
     }
 
     // Start is called before the first frame update
@@ -121,7 +122,7 @@ public class LevelThreePlayer : MonoBehaviour
     {
         StartCoroutine(FlashWhenDamaged(0.1f));
         _playerLives--;
-        if(_playerLives < 1)
+       if (_playerLives < 1)
         {
             Destroy(this.gameObject);
         }
@@ -140,6 +141,15 @@ public class LevelThreePlayer : MonoBehaviour
         }
         render.enabled = true;
 
+    }
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if(collision.gameObject.tag == Level3Tags.coins)
+        {
+            _main.CoinCollect();
+            Destroy(collision.gameObject);
+        }
     }
 
 
