@@ -12,5 +12,6 @@ public class Level3Tags
     public static string CHAIN = "Chain";
     public static string REDCRAB = "Red Crab";
     public static string SAW = "Saw";
+    public static string MANTIS = "Mantis";
 
 }
