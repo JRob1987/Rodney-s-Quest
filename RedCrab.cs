@@ -13,17 +13,20 @@ public class RedCrab : MonoBehaviour
     [SerializeField] private GameObject _sawPrefab;
     [SerializeField] private float fireRate = 0.5f;
     [SerializeField] private float nextFire = 0.1f;
+    [SerializeField] private int _health = 100;
 
     //reference variables
     private Rigidbody2D _body;
     private Animator _anim;
     private LevelThreePlayer _player;
+    private MainThree _main;
 
     private void Awake()
     {
         _body = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
-        _player = GameObject.Find("Player").GetComponent<LevelThreePlayer>(); 
+        _player = GameObject.Find("Player").GetComponent<LevelThreePlayer>();
+        _main = GameObject.Find("Main Camera").GetComponent<MainThree>();
     }
 
 
@@ -31,10 +34,10 @@ public class RedCrab : MonoBehaviour
     void Start()
     {
         originPosition = transform.position;
-        originPosition.x += 6f;
+        originPosition.x += 4f;
 
         movePosition = transform.position;
-        movePosition.x -= 11f;
+        movePosition.x -= 4f;
 
         canMove = true;
     }
@@ -82,8 +85,10 @@ public class RedCrab : MonoBehaviour
     {
         if(trigger.gameObject.tag == Tags.flameBulletTag)
         {
+            _main.DamageAudio();
             Destroy(this.gameObject);
             Destroy(trigger.gameObject);
+            CrabDamaged();
         }
         else if(trigger.gameObject.tag == Level3Tags.LevelThreePlayer)
         {
@@ -106,6 +111,16 @@ public class RedCrab : MonoBehaviour
         }
 
 
+    }
+
+    //damage method
+    private void CrabDamaged()
+    {
+        _health = _health - 50;
+        if(_health < 1)
+        {
+            Destroy(this.gameObject);
+        }
     }
 
 

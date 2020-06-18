@@ -76,6 +76,7 @@ public class SeaBomb : MonoBehaviour
         if (collision.gameObject.tag == Level3Tags.LevelThreePlayer)
         {
             canExplode = true;
+            main.ExplosionAudio();
             anim.SetBool("BombExplode", true);
             player.PlayerDamaged();
             Destroy(this.gameObject, 1.5f);
@@ -84,6 +85,7 @@ public class SeaBomb : MonoBehaviour
         else if (collision.gameObject.tag == Tags.flameBulletTag)
         {
             canExplode = true;
+            main.ExplosionAudio();
             anim.SetBool("BombExplode", true);
             Destroy(this.gameObject, 1.5f);
             Destroy(collision.gameObject);

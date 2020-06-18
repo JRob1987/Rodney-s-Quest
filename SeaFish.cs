@@ -17,6 +17,7 @@ public class SeaFish : MonoBehaviour
     private Rigidbody2D _body;
     private Animator _anim;
     private LevelThreePlayer _player;
+    private MainThree _main;
     
 
     private void Awake()
@@ -24,6 +25,7 @@ public class SeaFish : MonoBehaviour
         _body = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player").GetComponent<LevelThreePlayer>();
+        _main = GameObject.Find("Main Camera").GetComponent<MainThree>();
     }
 
     // Start is called before the first frame update
@@ -76,6 +78,7 @@ public class SeaFish : MonoBehaviour
     {
         if(target.tag == Tags.flameBulletTag)
         {
+            _main.DamageAudio();
             Destroy(target.gameObject);
             Destroy(this.gameObject);
 

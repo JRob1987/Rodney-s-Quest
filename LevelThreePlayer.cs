@@ -9,15 +9,19 @@ public class LevelThreePlayer : MonoBehaviour
     [SerializeField] private float movementSpeed = 5f;
     [SerializeField] private GameObject _flameBulletPrefab;
     [SerializeField] private GameObject _flameBulletReversePrefab;
-    private bool canFire = false;
+    [SerializeField] private bool canFire = false;
     [SerializeField] private int _playerLives = 3;
     private bool hasBeenDamaged = false;
+    [SerializeField] private GameObject _coinPrefab;
+    [SerializeField] private int _coinCount = 0;
+    
 
     //reference variables
     private Rigidbody2D _body;
     private Animator _anim;
     private MainThree _main;
     private SpriteRenderer render;
+    private UIManagerLevelThree _uiManager;
 
     private void Awake()
     {
@@ -26,18 +30,16 @@ public class LevelThreePlayer : MonoBehaviour
         _anim = GetComponent<Animator>();
         _main = GameObject.Find("Main Camera").GetComponent<MainThree>();
         render = GetComponent<SpriteRenderer>();
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManagerLevelThree>();
+
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
+   
     // Update is called once per frame
     void Update()
     {
         ShootFlameBullet();
+        
     }
 
     private void FixedUpdate()
@@ -59,12 +61,12 @@ public class LevelThreePlayer : MonoBehaviour
         if(horizontalMovement > 0)
         {
             _body.velocity = new Vector2(movementSpeed, _body.velocity.y);
-            ChangeHorizonalDirection(1);
+            ChangeHorizonalDirection(1.52f);
         }
         else if(horizontalMovement < 0)
         {
             _body.velocity = new Vector2(-movementSpeed, _body.velocity.y);
-            ChangeHorizonalDirection(-1);
+            ChangeHorizonalDirection(-1.52f);
         }
         //prevents player from sliding when movement stops
         else
@@ -92,7 +94,7 @@ public class LevelThreePlayer : MonoBehaviour
 
     }
 
-    private void ChangeHorizonalDirection(int direction)
+    private void ChangeHorizonalDirection(float direction)
     {
         Vector3 tempScale = transform.localScale;
         tempScale.x = direction;
@@ -101,30 +103,37 @@ public class LevelThreePlayer : MonoBehaviour
 
     private void ShootFlameBullet()
     {
-        if (Input.GetMouseButtonDown(0) && transform.localScale.x == 1)
+        if (Input.GetMouseButtonDown(0) && transform.localScale.x == 1.52f)
         {
             canFire = true;
+           // _anim.SetBool("Shoot", true);
             _main.ShootFlameBulletAudio();
             Instantiate(_flameBulletPrefab, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
             
 
 
         }
-        else if(Input.GetMouseButtonDown(0) && transform.localScale.x == -1)
+        else if(Input.GetMouseButtonDown(0) && transform.localScale.x == -1.52f)
         {
             canFire = true;
+            //_anim.SetBool("Shoot", true);
             _main.ShootFlameBulletAudio();
             Instantiate(_flameBulletReversePrefab, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
         }
+       
     }
 
     public void PlayerDamaged()
     {
+        _main.DamageAudio();
         StartCoroutine(FlashWhenDamaged(0.1f));
         _playerLives--;
+        _uiManager.UpdatePlayerLivesUI(_playerLives);
        if (_playerLives < 1)
         {
+            _main.GameOverAudio();
             Destroy(this.gameObject);
+            Time.timeScale = 0;
         }
     }
 
@@ -143,14 +152,36 @@ public class LevelThreePlayer : MonoBehaviour
 
     }
 
+    //update player lives when collecting a certain amount of coins
+    private void UpdatePlayerLives()
+    {
+        //every 10 coins player collects, add 1 life.
+        if(_coinCount % 10 == 0)
+        {
+            _playerLives = _playerLives + 1;
+            _uiManager.UpdatePlayerLivesUI(_playerLives);
+        }
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == Level3Tags.coins)
         {
             _main.CoinCollect();
+            _coinCount = _coinCount + 1;
+            _uiManager.UpdateCoinCollectedUI(_coinCount);
             Destroy(collision.gameObject);
+            UpdatePlayerLives();
         }
+        else if(collision.gameObject.tag == Tags.castle)
+        {
+            _main.CastleFinish();
+            Debug.Log("Level 3 Complete!");
+        }
+
     }
+
+   
 
 
 

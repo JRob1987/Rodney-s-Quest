@@ -11,12 +11,20 @@ public class MantisBoss : MonoBehaviour
     private Vector3 _originPosition;
     private Vector3 _movePosition;
     private bool _canMove = false;
+    private bool _isDead = false;
+    [SerializeField] private GameObject _stonePrefab;
+    [SerializeField] private float _fireRate = 1f;
+    [SerializeField] private float _nextFire = 1f;
+    private bool _hasBeenDamaged = false;
+   
 
 
     //reference variables
     private Rigidbody2D _body;
     private Animator _anim;
     private LevelThreePlayer _player;
+    private SpriteRenderer _render;
+    private MainThree _main;
 
 
     private void Awake()
@@ -24,6 +32,9 @@ public class MantisBoss : MonoBehaviour
         _body = GetComponent<Rigidbody2D>();
         _anim = GetComponent<Animator>();
         _player = GameObject.Find("Player").GetComponent<LevelThreePlayer>();
+        _render = GetComponent<SpriteRenderer>();
+        _main = GameObject.Find("Main Camera").GetComponent<MainThree>();
+
     }
 
     // Start is called before the first frame update
@@ -43,6 +54,7 @@ public class MantisBoss : MonoBehaviour
     {
         //method calls
         MantisMovement();
+        StartCoroutine(ShootStone(Random.Range(0 , 3f)));
     }
 
     //movement method
@@ -62,6 +74,58 @@ public class MantisBoss : MonoBehaviour
                // ChangeDirection(1f);
             }
         }
+    }
+
+    private void MantisDamaged()
+    {
+        _mantisHealth = _mantisHealth - 50;
+        StartCoroutine(FlashWhenDamaged(0.1f));
+        if(_mantisHealth < 1)
+        {
+            _isDead = true;
+            _anim.Play("MantisDead");
+            Destroy(this.gameObject, 1f);
+        }
+    }
+    //coroutine for player to flash when damaged
+    IEnumerator FlashWhenDamaged(float seconds)
+    {
+        _hasBeenDamaged = true;
+        if (_hasBeenDamaged)
+        {
+            _render.enabled = true;
+            yield return new WaitForSeconds(seconds);
+            _render.enabled = false;
+            yield return new WaitForSeconds(seconds);
+        }
+        _render.enabled = true;
+
+    }
+
+    private IEnumerator ShootStone(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        if(Time.time > _nextFire)
+        {
+            _nextFire = Time.time + _fireRate;
+            Instantiate(_stonePrefab , transform.position + Vector3.down, Quaternion.identity);
+        }
+    }
+
+    private void OnTriggerEnter2D(Collider2D target)
+    {
+        if(target.gameObject.tag == Level3Tags.LevelThreePlayer)
+        {
+            _player.PlayerDamaged();
+        }
+        else if(target.gameObject.tag == Tags.flameBulletTag)
+        {
+            _main.DamageAudio();
+            MantisDamaged();
+            Destroy(target.gameObject);
+        }
+
+        
     }
 
 
