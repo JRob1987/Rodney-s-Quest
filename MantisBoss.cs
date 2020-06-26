@@ -25,7 +25,7 @@ public class MantisBoss : MonoBehaviour
     private LevelThreePlayer _player;
     private SpriteRenderer _render;
     private MainThree _main;
-
+    private UIManagerLevelThree _uiManager;
 
     private void Awake()
     {
@@ -34,6 +34,7 @@ public class MantisBoss : MonoBehaviour
         _player = GameObject.Find("Player").GetComponent<LevelThreePlayer>();
         _render = GetComponent<SpriteRenderer>();
         _main = GameObject.Find("Main Camera").GetComponent<MainThree>();
+        _uiManager = GameObject.Find("Canvas").GetComponent<UIManagerLevelThree>();
 
     }
 
@@ -44,7 +45,7 @@ public class MantisBoss : MonoBehaviour
         _originPosition.x += 4f;
 
         _movePosition = transform.position;
-        _movePosition.x -= 10f;
+        _movePosition.x -= 4f;
 
         _canMove = true;
     }
@@ -53,8 +54,15 @@ public class MantisBoss : MonoBehaviour
     private void Update()
     {
         //method calls
-        MantisMovement();
-        StartCoroutine(ShootStone(Random.Range(0 , 3f)));
+        if(_player.transform.position.x >= 260)
+        {
+            
+            
+            _uiManager.EnableBossUI();
+            MantisMovement();
+            StartCoroutine(ShootStone(Random.Range(0, 3f)));
+        }
+        
     }
 
     //movement method
@@ -80,6 +88,7 @@ public class MantisBoss : MonoBehaviour
     {
         _mantisHealth = _mantisHealth - 50;
         StartCoroutine(FlashWhenDamaged(0.1f));
+        _uiManager.UpdateBossHealthUI(_mantisHealth);
         if(_mantisHealth < 1)
         {
             _isDead = true;

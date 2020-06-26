@@ -11,18 +11,11 @@ public class MainThree : MonoBehaviour
     [SerializeField] private AudioClip _damageSound;
     [SerializeField] private AudioClip _gameOverSound;
     [SerializeField] private AudioClip _explosionSound;
+    [SerializeField] private AudioClip _bossMusic;
+    [SerializeField] private AudioSource _levelThreeMusic;
+    
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 
     //plays sound when player shoots flame bullet
     public void ShootFlameBulletAudio()
@@ -59,5 +52,19 @@ public class MainThree : MonoBehaviour
     {
         AudioSource.PlayClipAtPoint(_explosionSound, transform.position);
     }
+
+    //boss entrance music
+    public void BossAudio()
+    {
+        AudioSource.PlayClipAtPoint(_bossMusic, transform.position);
+    }
+
+    //stop boss music
+    public void StopLevelThreeMusic()
+    {
+        _levelThreeMusic.Stop();
+    }
+
+    
 
 }

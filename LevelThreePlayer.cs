@@ -22,6 +22,7 @@ public class LevelThreePlayer : MonoBehaviour
     private MainThree _main;
     private SpriteRenderer render;
     private UIManagerLevelThree _uiManager;
+    private LevelLoader _levelLoader;
 
     private void Awake()
     {
@@ -31,6 +32,8 @@ public class LevelThreePlayer : MonoBehaviour
         _main = GameObject.Find("Main Camera").GetComponent<MainThree>();
         render = GetComponent<SpriteRenderer>();
         _uiManager = GameObject.Find("Canvas").GetComponent<UIManagerLevelThree>();
+        _levelLoader = GameObject.Find("Levels GameObject").GetComponent<LevelLoader>();
+        
 
     }
 
@@ -131,7 +134,9 @@ public class LevelThreePlayer : MonoBehaviour
         _uiManager.UpdatePlayerLivesUI(_playerLives);
        if (_playerLives < 1)
         {
+            _main.StopLevelThreeMusic();
             _main.GameOverAudio();
+            _uiManager.DisplayGameOverText();
             Destroy(this.gameObject);
             Time.timeScale = 0;
         }
@@ -163,6 +168,12 @@ public class LevelThreePlayer : MonoBehaviour
         }
     }
 
+    IEnumerator LoadLevelFourDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        _levelLoader.LoadLevelFourScene();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.gameObject.tag == Level3Tags.coins)
@@ -175,7 +186,11 @@ public class LevelThreePlayer : MonoBehaviour
         }
         else if(collision.gameObject.tag == Tags.castle)
         {
+            _main.StopLevelThreeMusic();
             _main.CastleFinish();
+            _uiManager.DisplayLevelCompleteText();
+            _uiManager.HideImagesAndText();
+            StartCoroutine(LoadLevelFourDelay(5f));
             Debug.Log("Level 3 Complete!");
         }
 

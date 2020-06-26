@@ -24,6 +24,18 @@ public class LevelLoader : MonoBehaviour
         SceneManager.LoadScene(2);
     }
 
+    //load level 3 with its build index
+    public void LoadLevelThreeScene()
+    {
+        SceneManager.LoadScene(3);
+    }
+
+    //load level 4 with its build index
+    public void LoadLevelFourScene()
+    {
+        SceneManager.LoadScene(4);
+    }
+
     //quit stand alone application
     public void QuitApplication()
     {

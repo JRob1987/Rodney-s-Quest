@@ -1,6 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
-using TMPro;
+using UnityEngine.UI;
 using UnityEngine;
 
 public class PlayerTwo : MonoBehaviour
@@ -40,6 +40,7 @@ public class PlayerTwo : MonoBehaviour
     private MainCameraTwo main;
     private SpriteRenderer render;
     private UIManagerTwo uiManager;
+    private LevelLoader levelLoader;
 
 
 
@@ -53,16 +54,12 @@ public class PlayerTwo : MonoBehaviour
         main = GameObject.Find("Main Camera").GetComponent<MainCameraTwo>();
         render = GetComponent<SpriteRenderer>();
         uiManager = GameObject.Find("Canvas").GetComponent<UIManagerTwo>();
+        levelLoader = GameObject.Find("Levels GameObject").GetComponent<LevelLoader>();
 
 
     }
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
+    
     // Update is called once per frame
     void Update()
     {
@@ -233,6 +230,12 @@ public class PlayerTwo : MonoBehaviour
 
     }
 
+    IEnumerator LoadLevelThreeDelay(float seconds)
+    {
+        yield return new WaitForSeconds(seconds);
+        levelLoader.LoadLevelThreeScene();
+    }
+
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.tag == Tags.coins)
@@ -256,6 +259,7 @@ public class PlayerTwo : MonoBehaviour
             main.StopLevelTwoSong();
             main.LevelClearSound();
             uiManager.DisplayLevelCompleteText();
+            StartCoroutine(LoadLevelThreeDelay(5f));
         }
     }
 
