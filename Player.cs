@@ -7,27 +7,32 @@ using UnityEngine;
 
 public class Player : MonoBehaviour
 {
-	//variables
+	//variables that can be seen in inspector
 	[SerializeField] private GameObject player;
 	[SerializeField] private float speed = 5f;
-	private Rigidbody2D body;
-	private Animator anim;
-	public Transform groundCheckPosition;
-	public LayerMask groundLayer;
-	[SerializeField] private bool isGrounded = true;
-	private bool jumped;
+	[SerializeField] private bool isGrounded;
 	[SerializeField] private float jumpForce;
 	[SerializeField] private GameObject flameBulletPrefab;
-	[SerializeField] private bool canFire;
-	private Main _mainCamera;
-	private float _xPos;
+	[SerializeField] private bool canFire;	
 	[SerializeField] private int playerLives = 3;
+	[SerializeField] private int coinsCollected = 0;
+	[SerializeField] Transform groundCheckPosition;
+	[SerializeField] LayerMask groundLayer;
+
+	//variables that are hidden from the inspector
+	private bool jumped;
+	private float _xPos;
 	private Scorpion _scorpion;
 	private GameObject trampoline;
-	[SerializeField] private int coinsCollected = 0;
+
+
+	//reference variables
+	private Rigidbody2D body;
+	private Animator anim;
+	private Main _mainCamera;
 	private UIManager _uiManager;
 	private LevelLoader _levelLoader;
-	
+
 
 	void Awake()
 	{
@@ -39,11 +44,7 @@ public class Player : MonoBehaviour
 		trampoline = GameObject.Find("Trampoline");
 		_uiManager = GameObject.Find("Canvas").GetComponent<UIManager>();
 		_levelLoader = GameObject.Find("Levels GameObject").GetComponent<LevelLoader>();
-
-
-		
-		
-		
+				
 	}
 
 
@@ -51,11 +52,12 @@ public class Player : MonoBehaviour
 	// Use this for initialization
 	void Start () 
 	{
-		//isGrounded = true;
+		isGrounded = true;
 		if(_uiManager == null)
 		{
 			Debug.LogError("UI manager is null");
 		}
+		
 		
 				
 	}
@@ -63,27 +65,24 @@ public class Player : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
-		CheckIfPlayerGrounded();
-		Jump();
-		ShootFireBall();
-		
-		
-	}
-
-	//used for physics calculations. Used with Rigidbodies
-	void FixedUpdate()
-	{
 		if(player != null)
-		{
-			//canWalk = true;
+        {
+			//method calls
 			PlayerWalking();
 			PlayerBounds();
+			CheckIfPlayerGrounded();
+			Jump();
+			ShootFireBall();
 			
 		}
+		else
+        {
+			Debug.LogError("Player is null!");
+        }
 		
 		
 	}
-
+	
 	//player walking
 	void PlayerWalking()
 	{
@@ -136,7 +135,7 @@ public class Player : MonoBehaviour
 		transform.localScale = tempScale;
 		
 	}
-
+	//checks to verify if the player is grounded
 	void CheckIfPlayerGrounded()
 	{
 		//cast a ray from this position in this direction, length of the ray, search for gameobjects on the ground layer
@@ -159,6 +158,7 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	//jump method
 	void Jump()
 	{
 		if(isGrounded == true)
@@ -174,6 +174,7 @@ public class Player : MonoBehaviour
 		}
 	}
 
+	//enables player to shoot a fireball
 	void ShootFireBall()
 	{	
 		if(isGrounded == true)
@@ -192,6 +193,7 @@ public class Player : MonoBehaviour
 		
 	}
 
+	//adds a slight delay between firings
 	IEnumerator ShootFireballDelay(float seconds)
 	{
 		yield return new WaitForSeconds(seconds);
@@ -200,7 +202,7 @@ public class Player : MonoBehaviour
 			   
 	}
 
-	//player collisions
+	//player collisions with tramploline
 	private void OnCollisionEnter2D(Collision2D collision)
 	{
 		if(collision.gameObject.tag ==  "Trampoline")
@@ -208,14 +210,11 @@ public class Player : MonoBehaviour
 			//trigger scorpion movement
 			_scorpion.EnableScorptionMovement();
 		}
-		else if(collision.gameObject.tag == "Scorpion")
-		{
-			//damage player
-			PlayerDamaged();
-		}
+		
 
     }
 
+	//player damaged method
 	public void PlayerDamaged()
 	{
 		playerLives--;
@@ -226,6 +225,8 @@ public class Player : MonoBehaviour
 			gameObject.SetActive(false);
 		}
 	}
+	
+	//increases the amount of coins player collects
 	private void CoinsCollected()
 	{
 		//increment coins collected by 1
@@ -234,6 +235,7 @@ public class Player : MonoBehaviour
 
 	}
 
+	//collision detection against the coins, scorpion boss, and the castle 
 	private void OnTriggerEnter2D(Collider2D trigger)
 	{
 		if(trigger.tag == Tags.coins)
@@ -242,21 +244,29 @@ public class Player : MonoBehaviour
 			Destroy(trigger.gameObject);
 			CoinsCollected();
 		}
+		else if (trigger.gameObject.tag == Tags.scorpionBoss)
+		{
+			//damage player
+			PlayerDamaged();
+		}
 		else if(trigger.tag == Tags.castle)
 		{
 			_mainCamera.StopLevelSong();
 			_mainCamera.PlayerReachesCastleSound();
 			_uiManager.DisplayLevelCompleteText();
+			//loads level 2 after 5 seconds
 			StartCoroutine(LoadLevelTwoDelay(5f));
 		}
 
+		
+
 	}
 
-
+	//delays the time for level 2 to load
 	IEnumerator LoadLevelTwoDelay(float seconds)
 	{
 		yield return new WaitForSeconds(seconds);
-		_levelLoader.LoadLevelTwoScene();
+		_levelLoader.LoadGamePlayScenes(2);
 	}
 
 

@@ -93,6 +93,10 @@ public class Scorpion : MonoBehaviour
             GetDamaged();
             
         }
+        else if(collision.tag == Tags.playerTag)
+        {
+            AttackPlayer();
+        }
     }
 
     //coroutine to flicker when scorpion takes damage
@@ -113,22 +117,8 @@ public class Scorpion : MonoBehaviour
     private void AttackPlayer()
     {
         _anim.SetBool("Attack", true);
-         // _anim.Play("Attack animation");
-    }
-
-    private void OnCollisionEnter2D(Collision2D other)
-    {
-        if(other.gameObject.tag == "Player")
-        {
-            AttackPlayer();
-        }
-    }
-
-    
+         
+    } 
 
 
-
-
-
-
-}
+} //end of class

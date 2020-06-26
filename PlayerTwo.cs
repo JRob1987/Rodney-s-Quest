@@ -233,7 +233,9 @@ public class PlayerTwo : MonoBehaviour
     IEnumerator LoadLevelThreeDelay(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        levelLoader.LoadLevelThreeScene();
+        //levelLoader.LoadLevelThreeScene();
+        levelLoader.LoadGamePlayScenes(3);
+        
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
