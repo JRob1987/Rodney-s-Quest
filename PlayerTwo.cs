@@ -68,7 +68,6 @@ public class PlayerTwo : MonoBehaviour
         if(player != null)
         {
             PlayerWalk();
-            PlayerBounds();
             Jump();
             ShootFireBall();
 
@@ -87,7 +86,7 @@ public class PlayerTwo : MonoBehaviour
         {
 
             body.velocity = new Vector2(speed, body.velocity.y);
-            ChangeDirection(1);
+            ChangeDirection(1.52f);
             
             
         }
@@ -95,7 +94,7 @@ public class PlayerTwo : MonoBehaviour
         {
 
             body.velocity = new Vector2(-speed, body.velocity.y);
-            ChangeDirection(-1);
+            ChangeDirection(-1.52f);
            
             
            
@@ -111,7 +110,7 @@ public class PlayerTwo : MonoBehaviour
     }
 
     //player changing direction 
-    void ChangeDirection(int direction)
+    void ChangeDirection(float direction)
     {
         Vector3 tempScale = transform.localScale;
         tempScale.x = direction;
@@ -206,14 +205,7 @@ public class PlayerTwo : MonoBehaviour
         }
     }
 
-    void PlayerBounds()
-    {
-        if (transform.position.x <= -6.7f)
-        {
-            transform.position = new Vector2(-6.7f, transform.position.y);
-        }
-
-    }
+   
 
     //coroutine for player to flash when damaged
     IEnumerator FlashWhenDamaged(float seconds)

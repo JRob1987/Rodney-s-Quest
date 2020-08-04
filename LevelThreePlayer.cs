@@ -168,10 +168,11 @@ public class LevelThreePlayer : MonoBehaviour
         }
     }
 
-    IEnumerator LoadLevelFourDelay(float seconds)
+    IEnumerator LoadClosingLevelDelay(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        _levelLoader.LoadLevelFourScene();
+        // _levelLoader.LoadLevelFourScene();
+        _levelLoader.LoadGamePlayScenes(4);
     }
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -190,8 +191,9 @@ public class LevelThreePlayer : MonoBehaviour
             _main.CastleFinish();
             _uiManager.DisplayLevelCompleteText();
             _uiManager.HideImagesAndText();
-            StartCoroutine(LoadLevelFourDelay(5f));
             Debug.Log("Level 3 Complete!");
+            StartCoroutine(LoadClosingLevelDelay(5f));
+           
         }
 
     }

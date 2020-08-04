@@ -69,7 +69,6 @@ public class Player : MonoBehaviour
         {
 			//method calls
 			PlayerWalking();
-			PlayerBounds();
 			CheckIfPlayerGrounded();
 			Jump();
 			ShootFireBall();
@@ -95,13 +94,13 @@ public class Player : MonoBehaviour
 		{
 			
 			body.velocity = new Vector2(speed, body.velocity.y);
-			ChangeDirection(1);
+			ChangeDirection(1.52f);
 		}
 		else if(hMovement < 0)
 		{
 			
 			body.velocity = new Vector2(-speed, body.velocity.y);
-			ChangeDirection(-1);
+			ChangeDirection(-1.52f);
 		}
 		//prevents player from sliding when movement stops
 		else
@@ -116,19 +115,11 @@ public class Player : MonoBehaviour
 		
 	}
 
-	void PlayerBounds()
-	{
-		if(transform.position.x <= -8.33f)
-		{
-			transform.position = new Vector2(-8.33f, transform.position.y);
-		}
-	  
-	}
-		
+	
 	
 
 	//change player's direction
-	void ChangeDirection(int direction)
+	void ChangeDirection(float direction)
 	{
 		Vector3 tempScale = transform.localScale;
 		tempScale.x = direction;
@@ -185,7 +176,7 @@ public class Player : MonoBehaviour
 				canFire = true;
 				_mainCamera.ShootFireBallSound();
 				anim.SetBool("Fire", true);
-				StartCoroutine(ShootFireballDelay(0.1f));
+				StartCoroutine(ShootFireballDelay(0.2f));
 
 			}
 		}		

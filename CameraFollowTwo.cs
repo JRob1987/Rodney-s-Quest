@@ -49,12 +49,13 @@ public class CameraFollowTwo : MonoBehaviour
                 lastTargetPosition = target.position; //record last tposition of the target
 
             }
-            else if(ahdeadTargetPos.x <= transform.position.x)
+           /* else if(ahdeadTargetPos.x <= transform.position.x)
             {
                 Vector3 newCameraPosition = Vector3.SmoothDamp(transform.position, ahdeadTargetPos, ref currentVelocity, cameraSpeed);
                 transform.position = new Vector3(newCameraPosition.x, transform.position.y, newCameraPosition.z);
                 lastTargetPosition = target.position; //record last tposition of the target
             }
+           */
         }
     }
 }

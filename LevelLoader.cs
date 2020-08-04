@@ -5,36 +5,32 @@ using UnityEngine.SceneManagement;
 
 public class LevelLoader : MonoBehaviour
 {
-   
+    
     //load main menu with its build index
     public void LoadMainMenuScene()
     {
         SceneManager.LoadScene(0);
     }
+     
 
-    //load level 1 scene with its build index
+    //loads the Keyboard Controls scene by its build index
+    public void LoadControlsScene()
+    {
+        SceneManager.LoadScene(5);
+    }
+
+    //load level 1 by its index after clicking the play button on the main menu
     public void LoadLevelOneScene()
     {
         SceneManager.LoadScene(1);
     }
 
-    //load level 2 with its build index
-    public void LoadLevelTwoScene()
+    //loads game play scenes 2-4 by their build index
+    public void LoadGamePlayScenes(int index)
     {
-        SceneManager.LoadScene(2);
-    }
-
-    //load level 3 with its build index
-    public void LoadLevelThreeScene()
-    {
-        SceneManager.LoadScene(3);
-    }
-
-    //load level 4 with its build index
-    public void LoadLevelFourScene()
-    {
-        SceneManager.LoadScene(4);
-    }
+        SceneManager.LoadScene(index);
+    }     
+    
 
     //quit stand alone application
     public void QuitApplication()
@@ -46,6 +42,6 @@ public class LevelLoader : MonoBehaviour
     public void QuitWebGL()
     {
         //opens to my portfolio page
-        Application.OpenURL("https://jrdoggett.carbonmade.com/");
+        Application.OpenURL("https://justindoggett.carbonmade.com/");
     }
 }
