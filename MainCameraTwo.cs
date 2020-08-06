@@ -12,6 +12,8 @@ public class MainCameraTwo : MonoBehaviour
     [SerializeField] private AudioClip _damageSound;
     [SerializeField] private AudioClip _levelCompleteSound;
     [SerializeField] private AudioSource _levelTwoSound;
+    [SerializeField] private AudioClip _gameOverSound;
+    
    
 
     // Start is called before the first frame update
@@ -20,11 +22,7 @@ public class MainCameraTwo : MonoBehaviour
         _source = GameObject.Find("Main Camera").GetComponent<AudioSource>();
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+   
 
     //player jump sound
     public void PlayerJumpAudio()
@@ -53,11 +51,19 @@ public class MainCameraTwo : MonoBehaviour
     {
         AudioSource.PlayClipAtPoint(_levelCompleteSound, transform.position);
     }
+
+    //game over sound
+    public void GameOverClip()
+    {
+        AudioSource.PlayClipAtPoint(_gameOverSound, transform.position);
+    }
     
     public void StopLevelTwoSong()
     {
         _levelTwoSound.Stop();
     }
+
+   
 
 
 

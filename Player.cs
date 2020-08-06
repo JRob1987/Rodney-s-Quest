@@ -72,6 +72,8 @@ public class Player : MonoBehaviour
 			CheckIfPlayerGrounded();
 			Jump();
 			ShootFireBall();
+			PauseGame();
+			
 			
 		}
 		else
@@ -82,6 +84,25 @@ public class Player : MonoBehaviour
 		
 	}
 	
+	//enables player to pause the game
+	private void PauseGame()
+    {
+		if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+		{
+			_uiManager.PauseTextDisplay();
+			//pause game
+			Time.timeScale = 0;
+		}
+		else if (Input.GetKeyDown(KeyCode.R))
+        {
+			//resume game
+			Time.timeScale = 1;
+			_uiManager.DisablePauseText();
+        }
+    }
+
+	
+
 	//player walking
 	void PlayerWalking()
 	{
@@ -176,7 +197,7 @@ public class Player : MonoBehaviour
 				canFire = true;
 				_mainCamera.ShootFireBallSound();
 				anim.SetBool("Fire", true);
-				StartCoroutine(ShootFireballDelay(0.2f));
+				StartCoroutine(ShootFireballDelay(0.1f));
 
 			}
 		}		
@@ -214,6 +235,11 @@ public class Player : MonoBehaviour
 		{
 			Destroy(this.gameObject);
 			gameObject.SetActive(false);
+			_mainCamera.StopLevelSong();
+			_uiManager.GameOverTextDisplay();
+			_mainCamera.GameOverSound();
+			//Time.timeScale = 0;
+			_levelLoader.LoadMainMenuScene();
 		}
 	}
 	

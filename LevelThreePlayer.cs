@@ -41,16 +41,30 @@ public class LevelThreePlayer : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        ShootFlameBullet();
-        
-    }
-
-    private void FixedUpdate()
-    {
         if (_player != null)
         {
             //method call
             Movement();
+            ShootFlameBullet();
+            PauseGame();
+        }
+
+    }
+
+    //enable the player to pause the game
+    private void PauseGame()
+    {
+        if (Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+        {
+            _uiManager.DisplayGamePausedText();
+            //pauses the game
+            Time.timeScale = 0;
+        }
+        else if(Input.GetKeyDown(KeyCode.R))
+        {
+            _uiManager.ClearGamePausedText();
+            //resumes game play
+            Time.timeScale = 1;
         }
     }
 
@@ -137,8 +151,9 @@ public class LevelThreePlayer : MonoBehaviour
             _main.StopLevelThreeMusic();
             _main.GameOverAudio();
             _uiManager.DisplayGameOverText();
-            Destroy(this.gameObject);
-            Time.timeScale = 0;
+             Destroy(this.gameObject);
+            _levelLoader.LoadMainMenuScene();
+           
         }
     }
 
@@ -171,7 +186,6 @@ public class LevelThreePlayer : MonoBehaviour
     IEnumerator LoadClosingLevelDelay(float seconds)
     {
         yield return new WaitForSeconds(seconds);
-        // _levelLoader.LoadLevelFourScene();
         _levelLoader.LoadGamePlayScenes(4);
     }
 
@@ -190,8 +204,7 @@ public class LevelThreePlayer : MonoBehaviour
             _main.StopLevelThreeMusic();
             _main.CastleFinish();
             _uiManager.DisplayLevelCompleteText();
-            _uiManager.HideImagesAndText();
-            Debug.Log("Level 3 Complete!");
+             Debug.Log("Level 3 Complete!");
             StartCoroutine(LoadClosingLevelDelay(5f));
            
         }

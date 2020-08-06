@@ -6,23 +6,22 @@ using UnityEngine;
 
 public class Beetle : MonoBehaviour
 {
-    //variables
+    //variables that can be see in the inspector
     [SerializeField] private float _movementSpeed = 3f;
-    private bool canMove = true;
-    private bool beetleDead = false;
-
-    //reference variables
+    [SerializeField] private GameObject _beetlePrefab;
+    
+    //variables not visible in the inspector
     private Animator _anim;
-    private GameObject _beetle;
     private Player _player;
     private Main _main;
+    private bool canMove;
+   
 
 
     private void Awake()
     {
         //reference components
         _anim = GetComponent<Animator>();
-        _beetle = GameObject.Find("Beetle Enemy");
         _player = GameObject.Find("Player").GetComponent<Player>();
         _main = GameObject.Find("Main Camera").GetComponent<Main>();
     }
@@ -35,56 +34,41 @@ public class Beetle : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        if(_beetlePrefab != null)
+        {
+            //method call
+            BeetleMovement();
+        }
+        else
+        {
+            //error
+            Debug.LogError("Beetle enemy is null!");
+        }       
 
-       
     }
 
-    private void FixedUpdate()
-    {
-        BeetleMovement();
-    }
-
-    //beetle movement
+    //Beetle's movement
     private void BeetleMovement()
-    {
-        if (_beetle != null)
-        {
-            canMove = true;
-            transform.Translate(Vector2.left * _movementSpeed * Time.deltaTime);
-        }
+    {           
+      canMove = true;
+      transform.Translate(Vector2.left * _movementSpeed * Time.deltaTime);      
        
-    }
-
-    //damage the player when collided
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.tag == "Player")
-        {
-            _player.PlayerDamaged();
-        }
-    }
-
-    //gets damaged when colliding with the player's flame bullet
+    }           
+    //Beetle get's destroyed by player's flame bullet, and damages the player when collides with player
     private void OnTriggerEnter2D(Collider2D trigger)
     {
         if(trigger.tag == Tags.flameBulletTag)
         {
              canMove = false;
             _main.EnemyDestroyedSound();
-            //destroy flame bullet
-            Destroy(trigger.gameObject);
-            
-            beetleDead = true;
-             //destroy beetle game object
-           
-            if(beetleDead == true)
-            {
-                Destroy(this.gameObject, 0.1f);
-               
-            }
-           
-          
+             Destroy(trigger.gameObject);
+            _anim.SetBool("Dead", true);
+             Destroy(this.gameObject, 0.3f);          
+                             
+        }
+        else if(trigger.tag == Tags.playerTag)
+        {
+            _player.PlayerDamaged();
         }
     }
 

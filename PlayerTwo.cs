@@ -63,19 +63,41 @@ public class PlayerTwo : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        CheckIfPlayerGrounded();
+       
 
         if(player != null)
         {
+            CheckIfPlayerGrounded();
             PlayerWalk();
             Jump();
             ShootFireBall();
+            PauseGame();
 
+        }
+        else
+        {
+            Debug.LogError("Player is Null!");
         }
        
     }
 
-   
+    //enables player to pause the game
+    private void PauseGame()
+    {
+        if(Input.GetKeyDown(KeyCode.LeftShift) || Input.GetKeyDown(KeyCode.RightShift))
+        {
+            uiManager.PauseGameText();
+            //pauses the game
+            Time.timeScale = 0;
+        }
+        else if(Input.GetKeyDown(KeyCode.R))
+        {
+            uiManager.ClearPauseGameText();
+            //continue game play
+            Time.timeScale = 1;
+        }
+    }
+
     //player movement
     void PlayerWalk()
     {
@@ -161,20 +183,20 @@ public class PlayerTwo : MonoBehaviour
 
     void ShootFireBall()
     {
-        if(isGrounded)
+        if(isGrounded == true)
         {
-            if (Input.GetMouseButtonDown(0) && transform.localScale.x == 1)
+            if (Input.GetMouseButtonDown(0) && transform.localScale.x == 1.52f)
             {
 
                 canFire = true;
                 main.ShootFlameBulletAudio();
                 anim.SetBool("Fire", true);
                 Instantiate(_flameBulletPrefab, new Vector2(transform.position.x, transform.position.y), Quaternion.identity);
-                //Instantiate(_flameBulletPrefab, new Vector2(transform.position.x, transform.position.y) * _flameBulletSpeed, Quaternion.identity);
+                
 
 
             }
-            else if (Input.GetMouseButtonDown(0) && transform.localScale.x == -1)
+            else if (Input.GetMouseButtonDown(0) && transform.localScale.x == -1.52f)
             {
                 
                 canFire = true;
@@ -200,8 +222,11 @@ public class PlayerTwo : MonoBehaviour
         uiManager.UpdatePlayerLivesUIText(lives);
         if (lives < 1)
         {
+            main.GameOverClip();
+            uiManager.DisplayGameOverText();
             Destroy(this.gameObject);
-            Time.timeScale = 0;
+            levelLoader.LoadMainMenuScene();
+           //ime.timeScale = 0;
         }
     }
 

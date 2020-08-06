@@ -6,12 +6,18 @@ public class Cactus : MonoBehaviour
 {
     private PlayerTwo _player;
     [SerializeField] private GameObject _flameBulletPrefab;
+    private UIManagerTwo _uiManagerTwo;
+    private MainCameraTwo _mainTwo;
+    private LevelLoader levelLoader;
 
     private void Awake()
     {
         _player = GameObject.Find("Player").GetComponent<PlayerTwo>();
-       
-        
+        _uiManagerTwo = GameObject.Find("Canvas").GetComponent<UIManagerTwo>();
+        _mainTwo = GameObject.Find("Main Camera").GetComponent<MainCameraTwo>();
+        levelLoader = GameObject.Find("Levels GameObject").GetComponent<LevelLoader>();
+
+
     }
 
     //when collided with player
@@ -19,7 +25,10 @@ public class Cactus : MonoBehaviour
     {
         if (collision.gameObject.tag == LevelTwoTags.PlayerTwo)
         {
-            Destroy(collision.gameObject);
+            _mainTwo.GameOverClip();
+            _uiManagerTwo.DisplayGameOverText();
+             Destroy(collision.gameObject);
+            levelLoader.LoadMainMenuScene();
         }
           
                      

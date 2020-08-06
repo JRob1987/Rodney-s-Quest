@@ -12,6 +12,7 @@ public class Main : MonoBehaviour
     [SerializeField] private AudioClip _coinCollect;
     [SerializeField] private AudioClip _enemyDestroyedClip;
     [SerializeField] private AudioClip _castleClip;
+    [SerializeField] private AudioClip _gameOverClip;
 
     
     //shoot fireball
@@ -49,6 +50,11 @@ public class Main : MonoBehaviour
     public void StopLevelSong()
     {
         _levelSong.Stop();
+    }
+
+    public void GameOverSound()
+    {
+        AudioSource.PlayClipAtPoint(_gameOverClip, transform.position);
     }
 
 }

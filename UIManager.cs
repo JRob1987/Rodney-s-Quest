@@ -12,11 +12,14 @@ public class UIManager : MonoBehaviour
     [SerializeField] private Text _coinsText;
     [SerializeField] private Text _bossHealthText;
     [SerializeField] private Text _levelCompleteText;
+    [SerializeField] private Text _gameOverText;
+    [SerializeField] private Text _pauseText;
     // Start is called before the first frame update
     void Start()
     {
         _bossImage.enabled = false;
         _bossHealthText.enabled = false;
+       
     }
 
     // Update is called once per frame
@@ -66,6 +69,33 @@ public class UIManager : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
 
         }
+    }
+
+    public void GameOverTextDisplay()
+    {
+        StartCoroutine(BlinkingGameOverText());
+    }
+
+    IEnumerator BlinkingGameOverText()
+    {
+        while (true)
+        {
+            _gameOverText.text = "";
+            yield return new WaitForSeconds(0.5f);
+            _gameOverText.text = "Game Over!!";
+            yield return new WaitForSeconds(0.5f);
+
+        }
+    }
+
+    public void PauseTextDisplay()
+    {
+        _pauseText.text = "Game Paused. Press R key to resume game play.";
+    }
+
+    public void DisablePauseText()
+    {
+        _pauseText.text = " ";
     }
 
 }

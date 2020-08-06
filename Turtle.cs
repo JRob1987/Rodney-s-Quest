@@ -28,18 +28,7 @@ public class Turtle : MonoBehaviour
 
 
 
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-
-    }
+    
 
     private void FixedUpdate()
     {
@@ -59,29 +48,28 @@ public class Turtle : MonoBehaviour
 
     }
 
-    //collision with the player
-    private void OnCollisionEnter2D(Collision2D collision)
-    {
-        if(collision.gameObject.tag == Tags.playerTag)
-        {
-            _player.PlayerDamaged();
-        }
-    }
+   
 
     //collision with the player's flame bullet
     private void OnTriggerEnter2D(Collider2D trigger)
     {
-        if(trigger.tag == Tags.flameBulletTag)
+        if (trigger.tag == Tags.flameBulletTag)
         {
             canMove = false;
             _main.EnemyDestroyedSound();
             Destroy(trigger.gameObject);
             turtleDead = true;
 
-            if(turtleDead == true)
+            if (turtleDead == true)
             {
                 Destroy(this.gameObject, 0.1f);
             }
         }
+        else if (trigger.gameObject.tag == Tags.playerTag)
+        {
+            _player.PlayerDamaged();
+        }
+            
+
     }
 }

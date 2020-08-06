@@ -14,6 +14,7 @@ public class UIManagerLevelThree : MonoBehaviour
     [SerializeField] private Image _mantisImage;
     [SerializeField] private Text _levelCompleted;
     [SerializeField] private Text _gameOverText;
+    [SerializeField] private Text _gamePausedText;
 
 
     private void Awake()
@@ -29,8 +30,11 @@ public class UIManagerLevelThree : MonoBehaviour
         _playerLivesText.text = "x : 3";
         _coinsCollectedText.text = "x: 0";
         _bossHealthText.text = "x: 350";
+       
       
     }
+
+
 
     
     public void UpdateCoinCollectedUI(int coins)
@@ -60,10 +64,7 @@ public class UIManagerLevelThree : MonoBehaviour
         StartCoroutine(BlinkingLevelCompleteText());
     }
 
-    public void DisplayGameOverText()
-    {
-        _gameOverText.enabled = true;
-    }
+   
 
     IEnumerator BlinkingLevelCompleteText()
     {
@@ -71,20 +72,38 @@ public class UIManagerLevelThree : MonoBehaviour
         {
             _levelCompleted.text = "";
             yield return new WaitForSeconds(0.5f);
-            _levelCompleted.text = "Mantis has been defeated! Moving on to Level 4!";
+            _levelCompleted.text = "Mantis has been defeated!";
             yield return new WaitForSeconds(0.5f);
 
         }
     }
 
-    public void HideImagesAndText()
+    public void DisplayGameOverText()
     {
-        _mantisImage.enabled = false;
-        _bossHealthText.enabled = false;
-        _playerImage.enabled = false;
-        _playerLivesText.enabled = false;
-        _coinImage.enabled = false;
-        _coinsCollectedText.enabled = false;
+        _gameOverText.enabled = true;
+        StartCoroutine(BlinkingGameOverText());
+    }
+
+    IEnumerator BlinkingGameOverText()
+    {
+        while (true)
+        {
+            _gameOverText.text = "";
+            yield return new WaitForSeconds(0.5f);
+            _gameOverText.text = "Game Over!!";
+            yield return new WaitForSeconds(0.5f);
+
+        }
+    }
+
+    public void DisplayGamePausedText()
+    {
+        _gamePausedText.text = "Game Paused. Click the R key to return to game play.";
+    }
+
+    public void ClearGamePausedText()
+    {
+        _gamePausedText.text = "";
     }
 
 

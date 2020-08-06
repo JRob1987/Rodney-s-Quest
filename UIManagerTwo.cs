@@ -9,11 +9,11 @@ public class UIManagerTwo : MonoBehaviour
     [SerializeField] private Text _playerLivesText;
     [SerializeField] private Image _coinsImage;
     [SerializeField] private Text _coinsText;
-    //[SerializeField] private Image _ghostPawnImage;
-    //[SerializeField] private Text _ghostLivesText;
     [SerializeField] private Image _bossImage;
     [SerializeField] private Text _bossHealthText;
     [SerializeField] private Text _levelCompleted;
+    [SerializeField] private Text _gameOverText;
+    [SerializeField] private Text _gamePausedText;
 
     private PlayerTwo player;
 
@@ -31,6 +31,7 @@ public class UIManagerTwo : MonoBehaviour
         _bossImage.enabled = false;
         _bossHealthText.enabled = false;
         _levelCompleted.enabled = false;
+        _gameOverText.enabled = false;
     }
 
     // Update is called once per frame
@@ -82,6 +83,34 @@ public class UIManagerTwo : MonoBehaviour
             yield return new WaitForSeconds(0.5f);
 
         }
+    }
+
+    public void DisplayGameOverText()
+    {
+        _gameOverText.enabled = true;
+        StartCoroutine(BlinkingGameOverText());
+    }
+
+    IEnumerator BlinkingGameOverText()
+    {
+        while (true)
+        {
+            _gameOverText.text = "";
+            yield return new WaitForSeconds(0.5f);
+            _gameOverText.text = "Game Over!!";
+            yield return new WaitForSeconds(0.5f);
+
+        }
+    }
+
+    public void PauseGameText()
+    {
+        _gamePausedText.text = "Game Paused. Press R to resume game play.";
+    }
+
+    public void ClearPauseGameText()
+    {
+        _gamePausedText.text = " ";
     }
 
 
